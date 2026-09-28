@@ -34,8 +34,8 @@
 本项目为个人学习项目 （参考Susalem EasyDemo）：
 - Prism + MVVM 架构
 - EF Core + SQLite 数据持久化
-- Modbus RTU 通信、多设备采集
-- 采集服务与界面解耦
+- Modbus RTU 读取、主单设备采集（多设备有代码）
+- 采集服务与界面解耦（有代码）
 - 历史记录、报警、断线重连
 - 模拟从站可用 `Modbus Slave`
 
