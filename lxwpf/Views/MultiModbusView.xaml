@@ -1,0 +1,87 @@
+﻿<UserControl x:Class="lxwpf.Views.MultiModbusView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:lxwpf.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding PageLoaded}" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Unloaded">
+            <i:InvokeCommandAction Command="{Binding PageUnLoaded}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- 连接区 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Text="串口：" VerticalAlignment="Center" />
+            <ComboBox ItemsSource="{Binding PortNames}"
+                      SelectedItem="{Binding SelectedPort}"
+                      Width="100" />
+
+            <TextBlock Text="波特率：" VerticalAlignment="Center" Margin="10,0,0,0" />
+            <TextBox Text="{Binding BaudRate}" Width="80" />
+
+            <Button Content="连接" Command="{Binding ConnectCommand}" Margin="10,0,0,0" />
+            <Button Content="断开" Command="{Binding DisconnectCommand}" Margin="5,0,0,0" />
+            <Button Content="刷新" Command="{Binding RefreshCommand}" Margin="5,0,0,0" />
+        </StackPanel>
+
+        <!-- 状态 -->
+        <TextBlock Grid.Row="1" Margin="0,10,0,0">
+            <Run Text="连接状态：" />
+            <Run Text="{Binding IsConnected}" />
+        </TextBlock>
+
+        <!-- 按设备分组显示 -->
+        <ScrollViewer Grid.Row="2" Margin="0,10,0,0" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding Devices}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <GroupBox Margin="0,0,0,10">
+                            <GroupBox.Header>
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="12" Height="12" Margin="0,0,5,0">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="Red" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsOnline}" Value="True">
+                                                        <Setter Property="Fill" Value="Green" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                    <TextBlock Text="{Binding DeviceName}" FontWeight="Bold" />
+                                </StackPanel>
+                            </GroupBox.Header>
+
+                            <DataGrid ItemsSource="{Binding Values}"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      IsReadOnly="True"
+                                      MaxHeight="200">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="地址" Binding="{Binding Address}" Width="100" />
+                                    <DataGridTextColumn Header="值" Binding="{Binding Value}" Width="*" />
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </GroupBox>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

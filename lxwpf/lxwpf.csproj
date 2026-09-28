@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="image\bjt.jpg" />
+    <None Remove="image\icon_化学品料号.png" />
+    <None Remove="image\tit_bg.png" />
+    <None Remove="image\大国工匠.jpg" />
+    <None Remove="tit_bg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.161" />
+    <PackageReference Include="NModbus4" Version="2.1.0" />
+    <PackageReference Include="NPOI" Version="2.8.1" />
+    <PackageReference Include="Prism.DryIoc" Version="9.0.537" />
+    <PackageReference Include="Prism.Wpf" Version="9.0.537" />
+    <PackageReference Include="System.IO.Ports" Version="10.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="image\bjt.jpg" />
+    <Resource Include="image\icon_化学品料号.png" />
+    <Resource Include="image\tit_bg.png" />
+    <Resource Include="image\大国工匠.jpg" />
+    <Resource Include="tit_bg.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Share\" />
+  </ItemGroup>
+
+</Project>
