@@ -22,23 +22,23 @@
 - **断线重连**：超时、断开自动重连
 
 ## 架构
-Views/ 界面
-ViewModels/ ViewModel
-Services/ 业务接口
-ServicesImpl/ 业务实现
-Entities/ 实体
-Repository/ DbContext
+- Views/ 界面
+- ViewModels/ ViewModel
+- Services/ 业务接口
+- ServicesImpl/ 业务实现
+- Entities/ 实体
+- Repository/ DbContext
 
-- 模拟从站可用 `Modbus Slave`
+
 ## 项目说明
 
-本项目为个人学习练手项目，用于练习：
-
+本项目为个人学习项目 （参考Susalem EasyDemo）：
 - Prism + MVVM 架构
 - EF Core + SQLite 数据持久化
 - Modbus RTU 通信、多设备采集
 - 采集服务与界面解耦
 - 历史记录、报警、断线重连
+- 模拟从站可用 `Modbus Slave`
 
 非生产项目，功能以学习为目的。
 
