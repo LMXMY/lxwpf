@@ -41,3 +41,17 @@ Repository/ DbContext
 - 历史记录、报警、断线重连
 
 非生产项目，功能以学习为目的。
+
+## 截图
+<img width="1929" height="1116" alt="注册" src="https://github.com/user-attachments/assets/0a56c9dc-1fc4-4e81-9b91-f0445e919ad8" />
+<img width="1712" height="1190" alt="登录" src="https://github.com/user-attachments/assets/cee214ce-04db-48e2-b6bb-47280483c799" />
+<img width="1978" height="1173" alt="Modbus参数" src="https://github.com/user-attachments/assets/6285016b-a906-4fc1-aaf3-e03a8f78bd4b" />
+<img width="1695" height="1177" alt="参数配置(用于多设备)" src="https://github.com/user-attachments/assets/be54eb8f-4f7e-4657-ba84-4eb8c1237dd9" />
+<img width="1708" height="1162" alt="历史记录" src="https://github.com/user-attachments/assets/40fa4ac8-c2ca-45fb-bac0-33dca981d063" />
+<img width="1927" height="1235" alt="报警列表" src="https://github.com/user-attachments/assets/420f728c-20a8-4993-9742-710087ea192a" />
+
+
+
+
+
+
