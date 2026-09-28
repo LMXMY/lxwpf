@@ -1,4 +1,4 @@
-# WPF Modbus 数据采集系统学习项目
+# WPF Modbus 数据采集系统（学习项目）
 
 基于 **Prism + MVVM + EF Core + Modbus RTU读取** 的 WPF 上位机项目，模拟 MES 设备数据采集场景。
 
