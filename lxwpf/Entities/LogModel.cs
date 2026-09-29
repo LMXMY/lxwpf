@@ -18,7 +18,7 @@ namespace lxwpf.Entities
         public string? Level { get; set; }        // Info / Warn / Error
 
         [Column("module")]
-        public string? Module { get; set; }       // 模块名：采集、登录、报警
+        public string? Module { get; set; }       // 模块名：采集、登录、报警 
 
         [Column("message")]
         public string? Message { get; set; }      // 日志内容
