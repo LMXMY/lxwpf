@@ -8,6 +8,7 @@ using System.IO.Ports;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
+using static Org.BouncyCastle.Math.EC.ECCurve;
 
 namespace lxwpf.ViewModels
 {
@@ -18,7 +19,9 @@ namespace lxwpf.ViewModels
 
         private readonly IHistoryService _historyService;
 
-        private readonly IAlarmService _alarmService; 
+        private readonly IAlarmService _alarmService;
+
+        private readonly ILogService _logService;
 
         //轮询
         private CancellationTokenSource? _cts;
@@ -26,17 +29,20 @@ namespace lxwpf.ViewModels
         public ModbusViewModel(IModbusService modbusService, 
             IDeviceConfigService deviceConfigService,
             IHistoryService historyService,
-            IAlarmService alarmService)
+            IAlarmService alarmService,
+            ILogService logService)
         {
             _modbusService = modbusService;
             _deviceConfigService = deviceConfigService;
             _historyService = historyService;
             _alarmService = alarmService;
+            _logService = logService;
 
             //链接
             ConnectCommand = new DelegateCommand(Connect);
             //断开链接
             DisconnectCommand = new DelegateCommand(Disconnect);
+
             //刷新
             //RefreshCommand = new DelegateCommand(Refresh);
 
@@ -154,13 +160,24 @@ namespace lxwpf.ViewModels
             try
             {
                 var values = await Task.Run(() => _modbusService.ReadHoldingRegisters(1, 0, 8));
-                if (!IsConnected) return;   // ← 断开后不再更新
+                if (!IsConnected)
+                {
+                    //断开链接时写入日志
+                    _logService.Warn("采集", $"串口 {SelectedPort} 连接失败");
+                    return;   // ← 断开后不再更新
+                }else if (values.Length == 0)
+                {
+                    _logService.Warn("采集", $"串口 {SelectedPort} 读取失败");
+                    return;
+                }
+                    
 
                 Datas.Clear();
                 for (int i = 0; i < values.Length; i++)
                 {
                     Datas.Add(new ModbusDataModel { Address = i, Value = values[i] });
                 }
+                _logService.Info("采集", $"串口 {SelectedPort} 采集成功，{values.Length} 个值");
 
                 // 报警判断
                 string deviceName = "单设备串口：" + SelectedPort;
@@ -176,6 +193,7 @@ namespace lxwpf.ViewModels
             catch (Exception ex)
             {
                 // 记录错误
+                _logService.Error("采集", $"串口 {SelectedPort} 采集异常", ex);
             }
 
         }

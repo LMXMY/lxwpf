@@ -16,6 +16,8 @@ namespace lxwpf.Repository
         public DbSet<AlarmConfigModel> AlarmConfigs { get; set; }
         public DbSet<AlarmRecordModel> AlarmRecords { get; set; }
 
+        public DbSet<LogModel> Logs { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
             options.UseSqlite("Data Source=C:\\XM\\lxwpf\\lxwpf.db");
