@@ -155,22 +155,27 @@ namespace lxwpf.ViewModels
         //单设备取数据
         private async Task SignRefresh()
         {
-            if (!IsConnected) return;
+            if (!IsConnected)
+            {
+                return;
+            }
 
             try
             {
                 var values = await Task.Run(() => _modbusService.ReadHoldingRegisters(1, 0, 8));
+
                 if (!IsConnected)
                 {
                     //断开链接时写入日志
-                    _logService.Warn("采集", $"串口 {SelectedPort} 连接失败");
+                    //_logService.Warn("采集", $"串口 {SelectedPort} 连接失败");
                     return;   // ← 断开后不再更新
-                }else if (values.Length == 0)
+                }
+
+                if (values.Length == 0)
                 {
-                    _logService.Warn("采集", $"串口 {SelectedPort} 读取失败");
+                    ReconnectSingle();
                     return;
                 }
-                    
 
                 Datas.Clear();
                 for (int i = 0; i < values.Length; i++)
@@ -194,6 +199,7 @@ namespace lxwpf.ViewModels
             {
                 // 记录错误
                 _logService.Error("采集", $"串口 {SelectedPort} 采集异常", ex);
+                ReconnectSingle();
             }
 
         }
@@ -252,7 +258,25 @@ namespace lxwpf.ViewModels
             }
         }
         */
+        //单设备重连
+        private DateTime _lastSingleReconnectTime = DateTime.MinValue;
 
+        private void ReconnectSingle()
+        {
+            if ((DateTime.Now - _lastSingleReconnectTime).TotalSeconds < 5) return;
+            _lastSingleReconnectTime = DateTime.Now;
+
+            _modbusService.Disconnect();
+            if (string.IsNullOrEmpty(SelectedPort)) return;
+
+            var ok = _modbusService.Connect(SelectedPort, BaudRate);
+            IsConnected = ok;
+            _logService.Info("通信", $"单设备重连：{ok}");
+        }
+
+
+
+        //用于多设备重连
         private readonly Dictionary<string, DateTime> _lastReconnectTime = new();
 
         private void TryReconnect(DeviceConfigModel config)
