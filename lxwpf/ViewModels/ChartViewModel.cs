@@ -12,7 +12,7 @@ namespace lxwpf.ViewModels
         private readonly ObservableCollection<double> _values = new();
         private readonly Random _random = new();
 
-        public ISeries[] Series { get; }
+        public ISeries[] Series { get; set; }
 
         public ChartViewModel()
         {
@@ -26,8 +26,15 @@ namespace lxwpf.ViewModels
                 }
             };
 
-            // 定时加数据
-            var timer = new DispatcherTimer
+            //Series = new ISeries[]
+            //{
+            //    new LineSeries<double> { Values = new double[] { 1, 2, 3, 5, 3, 4, 6 }, Name = "设备1" },
+            //    new LineSeries<double> { Values = new double[] { 6, 2, 4, 5, 1, 3, 7 }, Name = "设备2" },
+            //};
+
+
+        // 定时加数据
+        var timer = new DispatcherTimer
             {
                 Interval = TimeSpan.FromMilliseconds(500)
             };
