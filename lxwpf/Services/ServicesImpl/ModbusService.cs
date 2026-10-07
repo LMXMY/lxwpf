@@ -13,10 +13,18 @@ namespace lxwpf.Services.ServicesImpl
         private SerialPort? _serialPort;
         private IModbusSerialMaster? _master;
 
+        private readonly ILogService _logService;
+
         public bool IsConnected => _serialPort?.IsOpen ?? false;
+
 
         public bool Connect(string portName, int baudRate)
         {
+            // 防重复已连接，先断开
+            if (_serialPort != null && _serialPort.IsOpen)
+            {
+                Disconnect();
+            }
             try
             {
                 _serialPort = new SerialPort(portName, baudRate, Parity.None, 8, StopBits.One);
@@ -28,8 +36,9 @@ namespace lxwpf.Services.ServicesImpl
 
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                _logService.Error("通信", $"连接 {portName} 失败", ex);
                 return false;
             }
         }

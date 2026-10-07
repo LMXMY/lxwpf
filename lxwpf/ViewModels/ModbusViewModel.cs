@@ -150,7 +150,7 @@ namespace lxwpf.ViewModels
             }
         }
         */
-
+        #region 单设备
         //更新 刷新
         //单设备取数据
         private async Task SignRefresh()
@@ -198,7 +198,9 @@ namespace lxwpf.ViewModels
 
         }
 
-        #region
+        #endregion
+
+        #region 重连机制
         //根据配置取设备数据
         /*
         private readonly Dictionary<string, IModbusService> _services = new();
@@ -250,9 +252,45 @@ namespace lxwpf.ViewModels
             }
         }
         */
+
+        private readonly Dictionary<string, DateTime> _lastReconnectTime = new();
+
+        private void TryReconnect(DeviceConfigModel config)
+        {
+            string portName = config.PortName ?? config.DeviceName ?? "";
+            if (string.IsNullOrEmpty(portName)) return;
+
+            // 5 秒内不重复重连
+            if (_lastReconnectTime.TryGetValue(portName, out var last)
+                && (DateTime.Now - last).TotalSeconds < 5)
+            {
+                return;
+            }
+
+            _lastReconnectTime[portName] = DateTime.Now;
+
+            // 断开旧连接
+            if (_services.TryGetValue(portName, out var oldService))
+            {
+                oldService.Disconnect();
+                _services.Remove(portName);
+            }
+
+            // 重连
+            var service = new ModbusService();
+            if (service.Connect(portName, config.BaudRate))
+            {
+                _services[portName] = service;
+                _logService.Info("通信", $"{portName} 重连成功");
+            }
+            else
+            {
+                _logService.Warn("通信", $"{portName} 重连失败");
+            }
+        }
         #endregion
 
-        #region
+        #region 多设备
         //根据配置取设备数据
         private readonly Dictionary<string, IModbusService> _services = new();
         public ObservableCollection<DeviceDataModel> Devices { get; } = new();
@@ -267,21 +305,35 @@ namespace lxwpf.ViewModels
                 try
                 {
                     var service = GetOrConnectService(config);
-                    if (service == null) continue;
+                    if (service == null)
+                    {
+                        MarkDeviceOffline(config);
+                        TryReconnect(config);   // 重连
+                        continue;
+                    }
 
                     var values = await Task.Run(() => service.ReadHoldingRegisters(
                         config.SlaveId, config.StartAddress, config.ReadCount));
+
+                    if (values.Length == 0)
+                    {
+                        MarkDeviceOffline(config);
+                        TryReconnect(config);   // 重连
+                        continue;
+                    }
 
                     UpdateDeviceData(config, values);
                 }
                 catch (TimeoutException)
                 {
                     MarkDeviceOffline(config);   // 超时，标记离线，不弹窗
+                    TryReconnect(config);   // 重连
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"读取失败：{ex.Message}");
                     MarkDeviceOffline(config);
+                    TryReconnect(config);   // 重连
                 }
             }
         }
