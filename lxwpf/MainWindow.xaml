@@ -52,6 +52,7 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
             <Button Grid.Column="0" Content="登录"
@@ -75,6 +76,8 @@
 
             <Button Grid.Column="4" Content="报警"
                     Command="{Binding AlarmCommand}" />
+            <Button Grid.Column="5" Content="图表" 
+                    Command="{Binding ChartCommand}" />
         </Grid>
     </Grid>
 </Window>

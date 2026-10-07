@@ -47,6 +47,7 @@ namespace lxwpf.Services
             return data;
         }
 
+        /*
         public UserModel Login(string userName, string password, bool IsChecked)
         {
             UserModel user = new UserModel();
@@ -96,6 +97,37 @@ namespace lxwpf.Services
                 }
             }
             return user;
+        }
+        */
+
+        public UserModel? Login(string userName, string password, bool isChecked)
+        {
+            using (AppDbContext hc = new AppDbContext())
+            {
+                try
+                {
+                    var user = hc.Users!.FirstOrDefault(u =>
+                        u.UserName == userName &&
+                        u.Password == password &&
+                        u.State == 1);
+
+                    if (user == null) return null;
+
+                    return new UserModel
+                    {
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        Password = user.Password
+                    };
+
+
+                }
+                catch (Exception ex)
+                {
+                    return null;
+                }
+            }
+
         }
 
 

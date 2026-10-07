@@ -84,6 +84,14 @@ namespace lxwpf.ViewModels
             });
         }
 
+        public ICommand ChartCommand
+        {
+            get => new DelegateCommand(() =>
+            {
+                _regionManager.RequestNavigate("MainRegion", "ChartView");
+            });
+        }
+
         //参数配置
         public ICommand ParaSettingCommand { get; }
 

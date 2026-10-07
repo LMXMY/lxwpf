@@ -93,57 +93,92 @@ namespace lxwpf.ViewModels
 
 
 
-        private void Login()
+        //private void Login()
+        //{
+        //    ErrorMessage = "";
+        //    if (string.IsNullOrEmpty(UserName))
+        //    {
+        //        ErrorMessage = "UserName is empty";
+        //        return;
+        //    }
+        //    if (string.IsNullOrEmpty(Password))
+        //    {
+        //        ErrorMessage = "Password is empty";
+        //        return;
+        //    }
+
+
+        //    Task.Run(() =>
+        //    {
+        //        try
+        //        {
+        //            UserModel resultModel = _userService.Login(UserName, Password, false);
+
+        //            if (resultModel != null)
+        //            {
+
+        //                OverAllContext.User = resultModel!;
+        //                MainWindowViewModel.Username = "当前登录账户：" + OverAllContext.User.UserName;
+        //                ErrorMessage = "登录成功";
+
+
+        //这里用Dispatcher.Invoke 因为调用了Login 在后台线程，后又接直接更新UI
+        //                /*Application.Current.Dispatcher.Invoke(() =>
+        //                {
+        //                    //_dialogService.ShowDialog("MessageView", new DialogParameters() { { "Content", "登录成功!" } }, null);
+        //                    _dialogService.ShowDialog("MessageView",
+        //                    new DialogParameters() { { "Content", "登录成功!" } },
+        //                    (Action<IDialogResult>) null);
+        //                });*/
+
+        //                //Application.Current.Dispatcher.Invoke(() => RequestClose?.Invoke(new DialogResult(ButtonResult.OK)));
+        //                //AppSession.IsLogon = false;
+        //            }
+        //            else
+        //            {
+        //                ErrorMessage = "登录失败";
+        //            }
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            ErrorMessage = ex.Message;
+        //            //logger.Error(ex.Message);
+        //        }
+        //    });
+        //}
+
+        private async Task LoginAsync()
         {
             ErrorMessage = "";
-            if (string.IsNullOrEmpty(UserName))
-            {
-                ErrorMessage = "UserName is empty";
-                return;
-            }
-            if (string.IsNullOrEmpty(Password))
-            {
-                ErrorMessage = "Password is empty";
-                return;
-            }
 
+            if (string.IsNullOrEmpty(UserName)) { ErrorMessage = "请输入用户名"; return; }
+            if (string.IsNullOrEmpty(Password)) { ErrorMessage = "请输入密码"; return; }
 
-            Task.Run(() =>
+            try
             {
-                try
+                // await 后自动回 UI 线程
+                //是先等后台线程返回之后，才是改UI表单数据，所以不用Dispatcher
+                var resultModel = await Task.Run(() => _userService.Login(UserName, Password, false));
+
+                if (resultModel != null)
                 {
-                    UserModel resultModel = _userService.Login(UserName, Password, false);
-
-                    if (resultModel != null)
-                    {
-
-                        OverAllContext.User = resultModel!;
-                        MainWindowViewModel.Username = "当前登录账户：" + OverAllContext.User.UserName;
-                        ErrorMessage = "登录成功";
-
-                        /*Application.Current.Dispatcher.Invoke(() =>
-                        {
-                            //_dialogService.ShowDialog("MessageView", new DialogParameters() { { "Content", "登录成功!" } }, null);
-                            _dialogService.ShowDialog("MessageView",
-                            new DialogParameters() { { "Content", "登录成功!" } },
-                            (Action<IDialogResult>) null);
-                        });*/
-
-                        //Application.Current.Dispatcher.Invoke(() => RequestClose?.Invoke(new DialogResult(ButtonResult.OK)));
-                        //AppSession.IsLogon = false;
-                    }
-                    else
-                    {
-                        ErrorMessage = "登录失败";
-                    }
+                    OverAllContext.User = resultModel;
+                    MainWindowViewModel.Username = "当前登录账户：" + resultModel.UserName;
+                    ErrorMessage = "登录成功";
+                    // 或导航跳转
+                    //_regionManager.RequestNavigate("MainRegion", "XXX");
                 }
-                catch (Exception ex)
+                else
                 {
-                    ErrorMessage = ex.Message;
-                    //logger.Error(ex.Message);
+                    ErrorMessage = "登录失败";
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
         }
+
 
         public ICommand RegisterCommand
         {
@@ -163,9 +198,10 @@ namespace lxwpf.ViewModels
 
         public ICommand LoginCommand
         {
-            get => new DelegateCommand(() =>
+            get => new DelegateCommand(async () =>
             {
-                Login();
+                //Login();
+                await LoginAsync();
             });
         }
 

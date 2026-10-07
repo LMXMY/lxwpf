@@ -64,7 +64,9 @@ namespace lxwpf
             containerRegistry.RegisterForNavigation<HistoryRecordView, HistoryRecordViewModel>();
             containerRegistry.RegisterForNavigation<AlarmRecordView, AlarmRecordViewModel>();
 
-
+            //图像学习
+            containerRegistry.RegisterForNavigation<ChartView, ChartViewModel>();
+            
             containerRegistry.RegisterDialog<AddUserView, AddUserViewModel>();
 
             //采集服务 Singleton，整个应用一个实例
