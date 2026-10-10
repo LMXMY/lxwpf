@@ -1,4 +1,6 @@
-﻿using lxwpf.Repository;
+﻿using lxwpf.Card;
+using lxwpf.Card.Interface;
+using lxwpf.Repository;
 using lxwpf.Services;
 using lxwpf.Services.ServicesImpl;
 using lxwpf.ViewModels;
@@ -53,6 +55,9 @@ namespace lxwpf
             containerRegistry.Register<IDeviceConfigService, DeviceConfigService>();
             containerRegistry.Register<IHistoryService, HistoryService>();
             containerRegistry.Register<IAlarmService, AlarmService>();
+
+            // 运动控制：用模拟实现（没卡时）
+            containerRegistry.RegisterSingleton<IMotionService, LeadShineMotionService>();
 
 
 
